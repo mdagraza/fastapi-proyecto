@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from app.models.report import ReportStatus, ReportPriority
-from app.schemas.user import UserResponse
+from app.schemas.user import UserResponse, UserBasicResponse
 
 class ReportCreate(BaseModel):
     title: str
@@ -35,7 +35,7 @@ class ReportResponse(BaseModel):
     categoryId: int
     createdAt: datetime
     updatedAt: datetime
-    user: UserResponse | None = None
-    resolvedBy: UserResponse | None = None
+    user: UserBasicResponse | None = None
+    resolvedBy: UserBasicResponse | None = None
 
     model_config = {"from_attributes": True}

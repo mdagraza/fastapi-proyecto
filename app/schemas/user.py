@@ -18,3 +18,9 @@ class UserResponse(BaseModel):
     createdAt: datetime
 
     model_config = {"from_attributes": True}  #necesario para leer desde el modelo SQLAlchemy
+
+class UserBasicResponse(BaseModel):
+    id: int
+    username: str
+
+    model_config = {"from_attributes": True}
