@@ -6,7 +6,7 @@ from typing import List
 
 from datetime import datetime
 
-from app.database import Base
+from app.db.database import Base
 
 class NotificationType(Base):
     __tablename__ = "notifications_type"

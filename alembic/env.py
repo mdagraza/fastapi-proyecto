@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from dotenv import load_dotenv
 
-from app.database import Base
+from app.db.database import Base
 import app.models
 
 load_dotenv()

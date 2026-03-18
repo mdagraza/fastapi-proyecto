@@ -7,7 +7,7 @@ from typing import List
 from datetime import datetime
 from enum import Enum
 
-from app.database import Base
+from app.db.database import Base
 
 class UserRole(str, Enum):
     user = "user"
@@ -27,7 +27,7 @@ class User(Base):
     points: Mapped[int] = mapped_column(default=0, nullable=False)
     createdAt: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    reports: Mapped[List[Report]] = relationship(back_populates="user")
+    reports: Mapped[List[Report]] = relationship("Report", back_populates="user", foreign_keys="[Report.userId]")
     resolved_reports: Mapped[List[Report]] = relationship("Report", back_populates="resolvedBy", foreign_keys="[Report.resolvedById]")
     comments: Mapped[List[Comment]] = relationship(back_populates="user")
     notifications: Mapped[List[Notification]] = relationship(back_populates="user")

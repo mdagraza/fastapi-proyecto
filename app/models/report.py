@@ -6,7 +6,7 @@ from typing import List
 from datetime import datetime
 from enum import Enum
 
-from app.database import Base
+from app.db.database import Base
 
 class ReportStatus(str, Enum):
     pendiente = "pendiente"

@@ -5,7 +5,7 @@ from sqlalchemy import func, DateTime, ForeignKey
 from typing import List
 from datetime import datetime
 
-from app.database import Base
+from app.db.database import Base
 
 class ReasonPoints(Base):
     __tablename__ = "reason_points"
