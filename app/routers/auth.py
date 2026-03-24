@@ -8,6 +8,7 @@ from app.models.user import User
 from app.schemas.auth import UserLogin, UserResponse
 from app.core.security import verify_password, create_access_token, get_username
 from datetime import timedelta
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -32,7 +33,34 @@ async def auth_login(auth_data: UserLogin, db: AsyncSession = Depends(get_db)):
         )
     
     access_token = create_access_token(
-        data={"sub": user.username},
+        data={"sub": user.username, "role": user.role.value},
+        expires_delta=timedelta(minutes=30)
+    )
+
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/token", include_in_schema=False) #TODO: Endpoint duplicado, extraer logica a otra función o revisar mezcla | Usado para login Swagger
+async def auth_login(auth_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(User).where(User.username == auth_data.username)
+    )
+
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales inválidas"
+        )
+
+    if not verify_password(auth_data.password, user.passwordHash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales inválidas"
+        )
+    
+    access_token = create_access_token(
+        data={"sub": user.username, "role": user.role.value},
         expires_delta=timedelta(minutes=30)
     )
 

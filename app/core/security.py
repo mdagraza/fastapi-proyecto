@@ -8,7 +8,7 @@ import os
 
 load_dotenv()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login") #https://fastapi.tiangolo.com/es/tutorial/security/simple-oauth2/ | https://cosasdedevs.com/posts/autenticacion-login-jwt-fastapi/
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token") #https://fastapi.tiangolo.com/es/tutorial/security/simple-oauth2/ | https://cosasdedevs.com/posts/autenticacion-login-jwt-fastapi/
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -24,7 +24,7 @@ def verify_password(plain: str, hashed: str) -> bool:
 def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes=5)): #https://www.rfc-editor.org/rfc/rfc7519#section-4.1.2
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + (expires_delta)
-    to_encode.update({"exp": expire})
+    to_encode.update({"exp": expire, "iat": datetime.now(timezone.utc)})
     encoded_jwt = jwt.encode(to_encode, os.getenv("SECRET_KEY"))
     return encoded_jwt
 
