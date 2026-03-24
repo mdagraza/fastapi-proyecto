@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy import select
 from app.db.database import get_db
 from app.models.report import Report
-from app.schemas.report import ReportCreate, ReportUpdate, ReportResponse
+from app.schemas.report import ReportCreate, ReportUpdate, ReportResponse, PaginatedReportsResponse
 
 router = APIRouter(prefix="/reports", tags=["reports"])
 
@@ -15,12 +15,22 @@ def report_with_relations(): #Se cargan las relaciones desde el modelo
     ]
 #joinedload carga la relación con un join (Una sola consulta, pero puede traer datos duplicados) : Select * from report join user on report.userId = user.id 
 
-@router.get("/", response_model=list[ReportResponse])
-async def get_reports(db: AsyncSession = Depends(get_db)):
+@router.get("/", response_model=PaginatedReportsResponse)
+async def get_reports(page: int = Query(1, ge=1, description="Pagina actual"),
+    page_size: int = Query(10, ge=1, description="Cantidad de registros por pagina"),
+    db: AsyncSession = Depends(get_db)):
+    offset = (page - 1) * page_size 
+
     result = await db.execute(
-        select(Report).options(*report_with_relations()) #Se añaden las relaciones con options y se descomprime la lista con * (convierte el array en argumentos separados)
+        select(Report).options(*report_with_relations()).offset(offset).limit(page_size).order_by(Report.id)) #Se añaden las relaciones con options y se descomprime la lista con * (convierte el array en argumentos separados) | offset y limit para paginación
+
+    reports = result.scalars().all() #Todos en una lista
+
+    return PaginatedReportsResponse(
+        page=page,
+        page_size=page_size,
+        reports=reports
     )
-    return result.scalars().all() #Todos en una lista
 
 @router.get("/{report_id}", response_model=ReportResponse)
 async def get_report(report_id: int, db: AsyncSession = Depends(get_db)):

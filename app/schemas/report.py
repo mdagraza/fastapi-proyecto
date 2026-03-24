@@ -39,3 +39,8 @@ class ReportResponse(BaseModel):
     resolvedBy: UserBasicResponse | None = None
 
     model_config = {"from_attributes": True}
+
+class PaginatedReportsResponse(BaseModel):
+    page: int
+    page_size: int
+    reports: list[ReportResponse]
