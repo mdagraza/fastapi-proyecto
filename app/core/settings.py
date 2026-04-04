@@ -4,7 +4,6 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: list[str] = []
 
     DATABASE_URL: str
-    DATABASE_URL_SYNC: str
 
     DB_POOL_SIZE: int = 1 #TODO: Añadir esta configuración a la conexión de SQLAlchemy
     DB_MAX_OVERFLOW: int = 10
