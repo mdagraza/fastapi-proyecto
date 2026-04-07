@@ -38,10 +38,24 @@ DATABASE_URL=postgresql+asyncpg://usuario:contraseña@localhost:5432/nombre_db
 ADMIN_USERNAME=admin
 ADMIN_EMAIL=admin@dominio.com
 ADMIN_PASSWORD=contraseña_segura
+
+SECRET_KEY=EstoEsUnaClaveSecretaMuySegura0123456789
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+REFRESH_TOKEN_EXPIRE_DAYS=7
+ACCESS_COOKIE_NAME=t_access
+REFRESH_COOKIE_NAME=t_refresh
+
+BACKEND_CORS_ORIGINS=["http://ejemplo.com", "https://ejemplo.com"]
 ```
 
-## 3. Ejecutar la API
+## 3. Preparar la Base de Datos
 
 ```bash
-uvicorn app.main:app
+uv run alembic upgrade head
+```
+
+## 4. Ejecutar la API
+
+```bash
+uv run uvicorn app.main:app --reload
 ```
