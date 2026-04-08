@@ -7,14 +7,24 @@ API REST construida con **FastAPI** usando **SQLAlchemy async** con **PostgreSQL
 Este proyecto expone una API con FastAPI que:
 
 - Inicia un admin por defecto usando seeds.
-- Expone rutas básicas (como `/reports`). Más info en `/docs`.
+- Expone rutas básicas (como `/reports`, `/login`). Más info en `/docs`.
 - Utiliza base de datos PostgreSQL configurada mediante variables de entorno.
+
+---
+
+## Crear Docker
+
+Ejecutar en consola, teniendo [**Docker Desktop**](https://www.docker.com/products/docker-desktop/) instalado (en caso de Windows)
+
+```bash
+docker run --restart unless-stopped --env=POSTGRES_USER=admin --env=POSTGRES_PASSWORD=admin --env=POSTGRES_DB=ProyectoCiclo --volume=postgres_data:/var/lib/postgresql/data -p 5432:5432 --name DB_Proyecto -d postgres:17
+```
 
 ---
 
 ## 1. Preparar el entorno
 
-El proyecto usa **uv**, por lo que puedes crear el entorno virtual y sincronizar dependencias con un solo comando:
+El proyecto usa [**uv**](https://docs.astral.sh/uv/getting-started/installation/), por lo que puedes crear el entorno virtual y sincronizar dependencias con un solo comando:
 
 ```bash
 uv sync
@@ -24,7 +34,7 @@ Esto creará `.venv` e instalará todas las dependencias automáticamente.
 
 ## 2. Configurar variables de entorno
 
-Copia el archivo de ejemplo y edítalo con tus datos
+Copia el archivo de ejemplo y edítalo con tus datos.
 
 ```bash
 cp .env.example .env
@@ -50,11 +60,15 @@ BACKEND_CORS_ORIGINS=["http://ejemplo.com", "https://ejemplo.com"]
 
 ## 3. Preparar la Base de Datos
 
+Crea las tablas automáticamente en la base de datos.
+
 ```bash
 uv run alembic upgrade head
 ```
 
 ## 4. Ejecutar la API
+
+Esto ejecutará la aplicación en `http://127.0.0.1:8000/`
 
 ```bash
 uv run uvicorn app.main:app --reload
