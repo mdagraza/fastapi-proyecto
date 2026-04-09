@@ -8,20 +8,31 @@ from app.core.settings import settings
 from app.core.errors import NO_AUTENTICADO
 
 async def get_current_user(request: Request, token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
-    if not token: #TODO: Separar esta logica para que no se repita en cada endpoint protegido (dependencies/auth.py)
+    payload = await _get_token_payload(request, token)
+
+    user = await _get_user_from_payload(payload.get("sub"), db)
+    
+    return user
+
+async def get_current_user_jti(request: Request, token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
+    payload = await _get_token_payload(request, token)
+
+    user = await _get_user_from_payload(payload.get("sub"), db)
+    
+    return user, payload.get("jti")
+
+#Auxiliar
+async def _get_token_payload(request: Request, token: str | None = None):
+    if not token: 
         cookie_token = request.cookies.get(settings.ACCESS_COOKIE_NAME)
         if cookie_token:
             token = cookie_token
         else:
             raise NO_AUTENTICADO
-    
-    payload = await decode_token(token) 
+        
+    return decode_token(token)
 
-    if payload is None:
-        raise NO_AUTENTICADO
-     
-    user_id = payload.get("sub")
-    
+async def _get_user_from_payload(user_id: str, db: AsyncSession):   
     result = await db.execute(
         select(User).where(User.id == user_id)
     )

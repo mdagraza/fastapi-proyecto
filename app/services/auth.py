@@ -56,3 +56,9 @@ async def authenticate_user(auth_data: UserLogin, db: AsyncSession, response: Re
         )
 
     return {settings.ACCESS_COOKIE_NAME: access_token, "token_type": "bearer"}
+
+async def refresh_tokens(auth_data: UserLogin, db: AsyncSession, response: Response):
+    pass
+
+async def _create_cookies():
+    pass

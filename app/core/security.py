@@ -26,7 +26,7 @@ def create_access_token(data: dict, expires_delta: timedelta = timedelta(minutes
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY)
     return encoded_jwt
 
-async def decode_token(token: str = Depends(oauth2_scheme)):
+def decode_token(token: str = Depends(oauth2_scheme)):
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY)
         decoded_token["sub"] = int(decoded_token["sub"])
