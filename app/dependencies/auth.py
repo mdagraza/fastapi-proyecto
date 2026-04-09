@@ -8,7 +8,7 @@ from app.core.settings import settings
 from app.core.errors import NO_AUTENTICADO
 
 async def get_current_user(request: Request, token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):
-    payload = await _get_token_payload(request, token)
+    payload = _get_token_payload(request, token)
 
     user = await _get_user_from_payload(payload.get("sub"), db)
     
@@ -22,7 +22,7 @@ async def get_current_user_jti(request: Request, token: str = Depends(oauth2_sch
     return user, payload.get("jti")
 
 #Auxiliar
-async def _get_token_payload(request: Request, token: str | None = None):
+def _get_token_payload(request: Request, token: str | None = None):
     if not token: 
         cookie_token = request.cookies.get(settings.ACCESS_COOKIE_NAME)
         if cookie_token:
