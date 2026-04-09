@@ -6,13 +6,13 @@ from logging.config import fileConfig
 from alembic import context
 # ---
 import asyncio
-import os
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.db.database import Base
+import app.models  #Se importan los modelos para que Alembic los detecte
 from app.core.settings import settings
 
 # this is the Alembic Config object, which provides

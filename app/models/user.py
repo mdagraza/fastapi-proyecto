@@ -25,6 +25,7 @@ class User(Base):
     passwordHash: Mapped[str] = mapped_column(nullable=False)
     role: Mapped[UserRole] = mapped_column(SQLEnum(UserRole, name="user_role"), default=UserRole.user, nullable=False) 
     isActive: Mapped[bool] = mapped_column(default=True, nullable=False)
+    externalId: Mapped[str | None] = mapped_column(unique=True, nullable=True)
     points: Mapped[int] = mapped_column(default=0, nullable=False)
     createdAt: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
@@ -44,6 +45,7 @@ class UserSession(Base):
     userId: Mapped[int] = mapped_column(ForeignKey("auth.users.id"), nullable=False)
     jti: Mapped[str] = mapped_column(String(36), default=lambda: str(uuid.uuid4()), unique=True, nullable=False)
     deviceInfo: Mapped[str] = mapped_column(nullable=False)
+    ip: Mapped[str] = mapped_column(nullable=False)
     isRevoked: Mapped[bool] = mapped_column(default=False, nullable=False)
     rememberMe: Mapped[bool] = mapped_column(default=False, nullable=False)
     createdAt: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
