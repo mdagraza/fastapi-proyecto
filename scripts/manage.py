@@ -9,6 +9,9 @@ from app.schemas.report import ReportCreate, ReportCategoryCreate
 from app.schemas.user import UserCreate
 from app.models.user import User
 
+from app.core.security import hash_password
+from app.core.settings import settings
+
 cli = typer.Typer()
 faker = Faker()
 
@@ -26,7 +29,7 @@ async def _create_user():
         user_data = UserCreate(
             username=faker.user_name(),
             email=faker.email(),
-            password=faker.password()
+            password=hash_password(settings.ADMIN_PASSWORD), #Se usa la misma contraseña de admin para los usuarios de prueba
         )
         new_user = User(**user_data.model_dump())
         db.add(new_user)
