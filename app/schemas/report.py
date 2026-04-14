@@ -44,3 +44,8 @@ class PaginatedReportsResponse(BaseModel):
     page: int
     page_size: int
     reports: list[ReportResponse]
+
+class ReportCategoryCreate(BaseModel):
+    name: str
+    description: str | None = None
+    icon: str | None = None

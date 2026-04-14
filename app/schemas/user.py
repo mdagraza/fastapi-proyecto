@@ -1,11 +1,11 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from app.models.user import UserRole
 
 class UserCreate(BaseModel):
     username: str
     email: EmailStr
-    password: str
+    passwordHash: str = Field(validation_alias="password")
     role: UserRole = UserRole.user
 
 class UserResponse(BaseModel):
