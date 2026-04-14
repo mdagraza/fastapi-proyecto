@@ -1,6 +1,5 @@
 import typer
 from faker import Faker # https://pypi.org/project/Faker/
-from app.core.settings import settings
 
 import asyncio
 from app.db.database import AsyncSessionLocal
