@@ -32,4 +32,4 @@ app.include_router(auth_router)
 
 @app.get("/")
 async def root():
-    return {"status": "ok"}
+    return {"status": "ok", "message": "Check API Docs at /docs or /redoc"}
