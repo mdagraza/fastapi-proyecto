@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.db.database import get_db
-from app.models.user import User
+from app.models.user import User, UserSession
 from app.core.security import oauth2_scheme, decode_token
 from app.core.settings import settings
 from app.core.errors import NO_AUTENTICADO
@@ -17,7 +17,11 @@ class Get_Current_User:
         user = await self._get_user_from_payload(payload.get("sub"), db)
         jti = payload.get("jti")
 
-        #TODO: Verificar que el type del token sea el correcto
+        #Verificar que el type del token sea el correcto
+        if not (payload.get("type") == "access" and self.cookie_name == settings.ACCESS_COOKIE_NAME) or not (payload.get("type") == "refresh" and self.cookie_name == settings.REFRESH_COOKIE_NAME):
+            raise NO_AUTENTICADO
+        
+        await self._verify_jti(jti, db)
 
         return user, jti
 
@@ -42,3 +46,10 @@ class Get_Current_User:
             raise NO_AUTENTICADO
         
         return user
+
+    async def _verify_jti(self, jti: str, db: AsyncSession):
+        result = await db.execute(select(UserSession).where(UserSession.jti == jti))
+        session = result.scalar_one_or_none()
+
+        if not session or session.isRevoked:
+            raise NO_AUTENTICADO

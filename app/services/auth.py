@@ -40,6 +40,8 @@ async def refresh_tokens(user_jti: Tuple[User, str], db: AsyncSession, response:
             raise SIN_CREDENCIALES
         session.isRevoked = True
         await db.commit()
+    else:
+        raise SIN_CREDENCIALES
     
     return await _create_auth(response, request, db, user)
 
