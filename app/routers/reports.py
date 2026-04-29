@@ -88,3 +88,22 @@ async def update_report(report_id: int, report_data: ReportUpdate, db: AsyncSess
         .where(Report.id == report_id)
     )
     return result.scalar_one()
+
+@router.delete("/id/{report_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_report(report_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(Report)
+        .where(Report.id == report_id)
+    )
+    report = result.scalar_one_or_none()
+
+    if not report:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Report {report_id} no encontrado"
+        )
+
+    await db.delete(report)
+    await db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
